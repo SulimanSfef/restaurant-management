@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController
+
+;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,11 +27,13 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
-
 Route::post('/refresh', [AuthController::class, 'refreshToken']);
 
+               ///////////// نسيان الكلمة ////////////
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-Route::post('/forgot-password', [ForgotPasswordController::class, 'forgot']);
-Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
+                ///////////// خروج من التطبيق ////////////
 
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
