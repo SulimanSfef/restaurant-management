@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,4 +24,3 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
 
 //515///******** */
 
-//seef
