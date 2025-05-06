@@ -21,15 +21,6 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
     return $request->user();
 });
 
-           ////////////////// Auth  /////////////////////
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
 
-Route::post('/refresh', [AuthController::class, 'refreshToken']);
-
-
-Route::post('/forgot-password', [ForgotPasswordController::class, 'forgot']);
-Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
-
+//515///******** */
 
