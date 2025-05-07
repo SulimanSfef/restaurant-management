@@ -72,10 +72,10 @@ class AuthController extends Controller
 
 public function logout(Request $request)
 {
-    // حذف التوكن الحالي من العميل
-    $request->user()->tokens->each(function ($token) {
+    auth()->user()->tokens->each(function ($token) {
         $token->delete();
     });
+
 
     return $this->successResponse(null, 'User logged out successfully');
 }
@@ -83,7 +83,10 @@ public function logout(Request $request)
 
 
 //////////////////////////////////////////////////////////////
-
+public function index()
+{
+    return response()->json($this->authService->getAllUsers());
+}
 
 
 

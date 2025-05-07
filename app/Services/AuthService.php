@@ -78,4 +78,9 @@ public function resetPassword(array $data)
     return $status;
 }
 
+
+public function getAllUsers()
+{
+    return $this->userRepo->getAll();
+}
     }

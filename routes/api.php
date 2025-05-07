@@ -26,8 +26,9 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
            ////////////////// Auth  /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
+Route::middleware('auth:sanctum')->get('/users', [AuthController::class, 'index']);
 Route::post('/refresh', [AuthController::class, 'refreshToken']);
+// Route::get('/users', [AuthController::class, 'index']);
 
                ///////////// نسيان الكلمة ////////////
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
