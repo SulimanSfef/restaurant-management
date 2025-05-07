@@ -23,6 +23,13 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
     return $request->user();
 });
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+//515///******** */
+=======
+=======
+>>>>>>> seef
            ////////////////// Auth  /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -36,4 +43,8 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
                 ///////////// خروج من التطبيق ////////////
 
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+<<<<<<< HEAD
+>>>>>>> bc039e0ab09909750c9989071c833530cadb07fd
+=======
+>>>>>>> seef
 
