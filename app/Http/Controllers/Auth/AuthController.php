@@ -32,13 +32,13 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $token = $this->authService->login($request->validated());
+        $data = $this->authService->login($request->validated());
 
-        if (!$token) {
+        if (!$data) {
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        return $this->successResponse(['token' => $token], 'Login successful',200);
+        return $this->successResponse($data, 'Login successful',200);
     }
 
     public function user(Request $request)
