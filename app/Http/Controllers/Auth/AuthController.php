@@ -9,6 +9,7 @@ use App\Traits\ApiResponseTrait;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Models\RefreshToken;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -68,6 +69,80 @@ class AuthController extends Controller
         'access_token' => $accessToken
     ], 'Access token refreshed');
 }
+
+public function logout(Request $request)
+{
+    // حذف التوكن الحالي من العميل
+    $request->user()->tokens->each(function ($token) {
+        $token->delete();
+    });
+
+    return $this->successResponse(null, 'User logged out successfully');
+}
+
+
+
+//////////////////////////////////////////////////////////////
+
+
+
+
+public function forgotPassword(Request $request)
+{
+    // التحقق من صحة البيانات المدخلة
+    $request->validate([
+        'email' => 'required|email',
+    ]);
+
+    // إرسال رابط إعادة تعيين كلمة المرور
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    // إذا كانت العملية ناجحة
+    if ($status == Password::RESET_LINK_SENT) {
+        return $this->successResponse(null, 'Reset password link sent to your email');
+    }
+
+    // في حالة فشل العملية
+    return $this->errorResponse('Failed to send reset password link', 400);
+}
+
+
+
+
+
+////////              /////////////////
+
+public function resetPassword(Request $request)
+{
+    // التحقق من صحة البيانات المدخلة
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|min:6|confirmed',
+        'token' => 'required', // التوكن الذي تم إرساله للبريد الإلكتروني
+    ]);
+
+    // إعادة تعيين كلمة المرور باستخدام التوكن والبريد الإلكتروني
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password),
+            ])->save();
+        }
+    );
+
+    // إذا كانت العملية ناجحة
+    if ($status == Password::PASSWORD_RESET) {
+        return $this->successResponse(null, 'Password has been reset successfully');
+    }
+
+    // في حالة فشل العملية
+    return $this->errorResponse('Failed to reset password', 400);
+}
+
+
 
 }
 
