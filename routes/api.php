@@ -23,28 +23,22 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
     return $request->user();
 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-//515///******** */
-=======
-=======
->>>>>>> seef
+
            ////////////////// Auth  /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
-Route::post('/refresh', [AuthController::class, 'refreshToken']);
 
                ///////////// نسيان الكلمة ////////////
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-                ///////////// خروج من التطبيق ////////////
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/refresh', [AuthController::class, 'refreshToken']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
-<<<<<<< HEAD
->>>>>>> bc039e0ab09909750c9989071c833530cadb07fd
-=======
->>>>>>> seef
-
+    Route::middleware('is.admin')->group(function () {
+       //
+    });
+});

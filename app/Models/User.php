@@ -47,4 +47,10 @@ class User extends Authenticatable
 {
     $this->notify(new ResetPasswordApiNotification($token));
 }
+
+
+public function role()
+{
+    return $this->belongsTo(Role::class);
+}
 }

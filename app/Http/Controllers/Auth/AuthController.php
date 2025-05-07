@@ -9,7 +9,6 @@ use App\Traits\ApiResponseTrait;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ForgetRequest;
-use App\Http\Requests\ForgetRequest;
 use App\Models\RefreshToken;
 use Illuminate\Support\Facades\Password;
 
