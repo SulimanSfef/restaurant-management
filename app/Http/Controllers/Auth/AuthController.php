@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\ForgetRequest;
+use App\Http\Requests\ForgetRequest;
 use App\Models\RefreshToken;
 use Illuminate\Support\Facades\Password;
 
@@ -87,16 +89,12 @@ public function logout(Request $request)
 
 
 
-public function forgotPassword(Request $request)
+public function forgotPassword(ForgetRequest $request)
 {
-    // التحقق من صحة البيانات المدخلة
-    $request->validate([
-        'email' => 'required|email',
-    ]);
 
     // إرسال رابط إعادة تعيين كلمة المرور
     $status = Password::sendResetLink(
-        $request->only('email')
+        $request->validated()->only('email')
     );
 
     // إذا كانت العملية ناجحة
