@@ -18,6 +18,12 @@ class UserRepository
     public function getAll()
     {
         return User::all();
-    }
-}
 
+    }
+    public function deleteUser($id)
+   {
+       $user = User::findOrFail($id);
+       return $user->delete();
+   }
+
+}
