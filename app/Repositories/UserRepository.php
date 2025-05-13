@@ -15,5 +15,11 @@ class UserRepository
     {
         return User::where('email', $email)->first();
     }
+
+     public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        return $user->delete();
+    }
 }
 

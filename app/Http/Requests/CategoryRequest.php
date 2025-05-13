@@ -10,11 +10,12 @@ class CategoryRequest extends FormRequest
         return true;
     }
 
-    
+
     public function rules(): array
     {
         return [
             'name' => 'required|string|unique:categories,name',
+            'description' => 'nullable',
         ];
     }
 }
