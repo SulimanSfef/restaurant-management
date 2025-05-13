@@ -18,11 +18,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+   protected $fillable = ['name', 'email', 'password', 'role'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,6 +44,35 @@ class User extends Authenticatable
     $this->notify(new ResetPasswordApiNotification($token));
 }
 
+  /**
+     * علاقة المستخدم مع الطلبات (Orders)
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
+    /**
+     * علاقة المستخدم مع الفواتير (Invoices)
+     */
+    public function invoices()
+    {
+        return $this->hasManyThrough(Invoice::class, Order::class);
+    }
 
+    /**
+     * علاقة المستخدم مع رموز الوصول الشخصية (Tokens)
+     */
+    // public function tokens()
+    // {
+    //     return $this->morphMany(PersonalAccessToken::class, 'tokenable');
+    // }
+
+    /**
+     * علاقة المستخدم مع رموز التحديث (Refresh Tokens)
+     */
+    public function refreshTokens()
+    {
+        return $this->hasMany(RefreshToken::class);
+    }
 }

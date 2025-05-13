@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['order_id', 'payment_method', 'total'];
+
+    /**
+     * علاقة الفاتورة مع الطلب (Order)
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }
