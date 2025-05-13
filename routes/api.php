@@ -23,18 +23,22 @@ Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
     return $request->user();
 });
 
+
+
            ////////////////// Auth  /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->get('/users', [AuthController::class, 'index']);
-Route::post('/refresh', [AuthController::class, 'refreshToken']);
-// Route::get('/users', [AuthController::class, 'index']);
 
                ///////////// نسيان الكلمة ////////////
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-                ///////////// خروج من التطبيق ////////////
+Route::middleware('auth:sanctum')->group(function () {
+   
+    Route::post('/refresh', [AuthController::class, 'refreshToken']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
-
+    Route::middleware('is.admin')->group(function () {
+        Route::get('/users', [AuthController::class, 'index']);
+    });
+});

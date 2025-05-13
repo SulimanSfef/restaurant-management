@@ -47,4 +47,7 @@ class User extends Authenticatable
 {
     $this->notify(new ResetPasswordApiNotification($token));
 }
+
+
+
 }
