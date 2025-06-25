@@ -32,5 +32,13 @@ class ReservationRepository
         $reservation = Reservation::findOrFail($id);
         return $reservation->delete();
     }
+
+    public function findByTableAndTime($tableId, $reservedAt)
+{
+    return \App\Models\Reservation::where('table_id', $tableId)
+        ->where('reserved_at', $reservedAt)
+        ->first();
+}
+
 }
 

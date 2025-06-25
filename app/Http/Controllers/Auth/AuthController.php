@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
@@ -22,14 +24,44 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+
+
+
     public function register(RegisterRequest $request)
-    {
-        $user = $this->authService->register($request->validated());
-        return $this->successResponse([
-            'user' => $user,
-            'token' => $user->createToken('api-token')->plainTextToken
-        ], 'User registered successfully', 201);
-    }
+{
+    $user = $this->authService->register($request->validated());
+    
+     $user->refresh();
+
+    // إنشاء access token
+    $accessToken = $user->createToken('api-token')->plainTextToken;
+
+    // إنشاء refresh token عشوائي
+    $plainRefreshToken = bin2hex(random_bytes(64)); // 128 character
+    $hashedRefreshToken = hash('sha256', $plainRefreshToken);
+
+    // حفظ التوكن في قاعدة البيانات
+    $user->refreshTokens()->create([
+        'token' => $hashedRefreshToken,
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    return $this->successResponse([
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+        ],
+        'access_token' => $accessToken,
+        'refresh_token' => $plainRefreshToken,
+    ], 'User registered successfully', 201);
+}
+
+
+
 
     public function login(LoginRequest $request)
     {

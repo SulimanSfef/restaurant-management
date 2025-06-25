@@ -9,7 +9,7 @@ class Table extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['table_number', 'status'];
+    protected $fillable = ['table_number', 'status','capacity'];
 
     /**
      * علاقة الطاولة مع الحجوزات (Reservations)

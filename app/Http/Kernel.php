@@ -46,6 +46,7 @@ class Kernel extends HttpKernel
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            //   \App\Http\Middleware\SetLocale::class, /// اللغة
         ],
     ];
 
@@ -67,7 +68,11 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'is.admin' => \App\Http\Middleware\IsAdmin::class,
 
+        ////////////////////////////////////////////////////////////////////////////////////////
+        'is.admin' => \App\Http\Middleware\IsAdmin::class,
+        'is.cashier' => \App\Http\Middleware\IsCashier::class,
+        'is.chef' => \App\Http\Middleware\IsChef::class,
+        'is.waiter' => \App\Http\Middleware\IsWaiter::class,
     ];
 }

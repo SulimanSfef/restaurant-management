@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -10,12 +9,13 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->role === 'admin') {
+        if (auth()->check() && auth()->user()->role == 'client') {
             return $next($request);
         }
 
         return response()->json([
-            'message' => 'Unauthorized. Admin access only.'
+            'message' => 'Unauthorized. client access only.'
         ], 403);
     }
 }
+

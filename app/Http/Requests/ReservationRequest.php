@@ -16,7 +16,7 @@ class ReservationRequest extends FormRequest
             'customer_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'table_id' => 'required|exists:tables,id',
-            'reserved_at' => 'required|date',
+            'reserved_at' => 'required|date_format:Y-m-d H:i:s|after:now',
             'status' => 'required|in:confirmed,pending,cancelled',
             'notes' => 'nullable|string|max:500',
         ];

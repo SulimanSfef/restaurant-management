@@ -21,5 +21,18 @@ class UserRepository
         $user = User::findOrFail($id);
         return $user->delete();
     }
+
+
+      public function findById($id)
+    {
+        return User::find($id);
+    }
+
+    public function updateRole(User $user, string $role): User
+    {
+        $user->role = $role;
+        $user->save();
+        return $user;
+    }
 }
 

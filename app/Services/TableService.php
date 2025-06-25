@@ -37,5 +37,17 @@ class TableService
     {
         return $this->tableRepository->deleteTable($id);
     }
+
+    public function getAvailableTablesByCapacity($peopleCount)
+{
+    return $this->tableRepository->getTablesByCapacity($peopleCount);
+}
+
+
+public function getTablesSortedByReservations()
+{
+    return $this->tableRepository->getTablesSortedByReservations();
+}
+
 }
 

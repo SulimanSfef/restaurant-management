@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tables', function (Blueprint $table) {
-            $table->id();
-            $table->integer('table_number');
-            $table->enum('status', ['available', 'occupied', 'reserved'])->default('available');
-            $table->timestamps();
-        });
+     Schema::create('tables', function (Blueprint $table) {
+    $table->id();
+    $table->integer('table_number');
+    $table->enum('status', ['available', 'reserved'])->default('available');
+    $table->integer('capacity')->default(1);
+    $table->timestamps();
+});
+
     }
 
     /**

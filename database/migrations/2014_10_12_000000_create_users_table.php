@@ -17,13 +17,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'waiter', 'cashier', 'chef']);
+            $table->enum('role', ['admin', 'waiter', 'cashier', 'chef','client'])->default('client');
             $table->rememberToken();
             $table->timestamps();
         });
     }
 
-    
+
     public function down(): void
     {
         Schema::dropIfExists('users');

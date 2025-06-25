@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TableRequest extends FormRequest
+class UpdateTableRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,9 +14,8 @@ class TableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'table_number' => 'required|integer|unique:tables',
-            'status' => 'required|in:available,occupied,reserved',
-            'capacity' => 'required|integer|min:1',
+            'table_number' => 'sometimes|integer|unique:tables',
+            'status' => 'sometimes|in:available,occupied,reserved',
         ];
     }
 }

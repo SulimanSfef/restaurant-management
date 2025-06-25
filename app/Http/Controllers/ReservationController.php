@@ -22,7 +22,7 @@ class ReservationController extends Controller
     // لإنشاء حجز جديد
     public function store(ReservationRequest $request)
     {
-        return response()->json($this->reservationService->createReservation($request->validated()), 201);
+        return response()->json($this->reservationService->createReservation($request->validated()));
     }
 
     // للحصول على تفاصيل حجز معين

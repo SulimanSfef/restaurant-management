@@ -51,6 +51,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 
     /**
      * علاقة المستخدم مع الفواتير (Invoices)
@@ -74,5 +78,11 @@ class User extends Authenticatable
     public function refreshTokens()
     {
         return $this->hasMany(RefreshToken::class);
+    }
+
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

@@ -32,5 +32,22 @@ class TableRepository
         $table = Table::findOrFail($id);
         return $table->delete();
     }
+
+    // في TableRepository.php
+public function getTablesByCapacity($peopleCount)
+{
+    return Table::where('capacity', '>=', $peopleCount)
+                ->where('status', 'available') // لو عندك حالة للطاولة مثلا متاحة أو محجوزة
+                ->get();
+}
+
+public function getTablesSortedByReservations()
+{
+    return \App\Models\Table::withCount('reservations')
+        ->orderBy('reservations_count', 'asc')
+        ->get();
+}
+
+
 }
 

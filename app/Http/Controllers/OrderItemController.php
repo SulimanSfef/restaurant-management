@@ -41,6 +41,6 @@ class OrderItemController extends Controller
     // لحذف عنصر من الطلب
     public function destroy($id)
     {
-        return response()->json($this->orderItemService->deleteOrderItem($id), 204);
+        return response()->json($this->orderItemService->deleteOrderItem($id), 201);
     }
 }
