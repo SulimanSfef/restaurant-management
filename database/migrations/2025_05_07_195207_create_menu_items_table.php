@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
      Schema::create('menu_items', function (Blueprint $table) {
-    $table->id(); // معرف العنصر في القائمة
-    $table->string('name'); // اسم الوجبة أو العنصر (مثلاً "بيتزا مارجريتا")
-    $table->decimal('price', 10, 2); // السعر (مثلاً: 19.99)
-    $table->text('description')->nullable(); // وصف تفصيلي (اختياري)
+    $table->id();
+    $table->string('name');
+    $table->decimal('price', 10, 2);
+    $table->text('description')->nullable();
     $table->foreignId('category_id')->constrained()->onDelete('cascade');
-    // ربط بالتصنيفات (categories)
-    $table->string('image')->nullable(); // مسار الصورة (اختياري)
-    $table->timestamps(); // created_at و updated_at
+    $table->string('image')->nullable();
+    $table->timestamps(); 
 });
 
     }

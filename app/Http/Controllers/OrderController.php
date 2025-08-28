@@ -2,41 +2,108 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderRequest;
+use App\Http\Requests\OrderByWaiterRequest;
+use App\Http\Requests\UserOrderRequest;
 use App\Services\OrderService;
+use App\Traits\ApiResponseTrait;
 
 class OrderController extends Controller
 {
-    protected $orderService;
+    use ApiResponseTrait;
+
+    protected OrderService $orderService;
 
     public function __construct(OrderService $orderService)
     {
         $this->orderService = $orderService;
     }
 
-    public function index()
+    // ✅ إنشاء طلب بواسطة النادل
+    public function storeByWaiter(OrderByWaiterRequest $request)
     {
-        return response()->json($this->orderService->getAllOrders());
+        $data = $request->validated();
+
+        if ($this->orderService->getActiveOrderByTable($data['table_id'])) {
+            return $this->errorResponse('هذه الطاولة لديها طلب نشط بالفعل.', 403);
+        }
+
+        $data['user_id'] = auth()->id();
+
+        $order = $this->orderService->createOrderByWaiter($data);
+
+        return $this->successResponse($order, 'تم إنشاء الطلب بواسطة النادل بنجاح', 201);
     }
 
-    public function store(OrderRequest $request)
+    // ✅ إنشاء طلب بواسطة المستخدم
+    public function store(UserOrderRequest $request)
     {
-        return response()->json($this->orderService->createOrder($request->validated()), 201);
+        $user = auth()->user();
+        $data = $request->validated();
+
+        $order = $this->orderService->createUserOrder(
+            $user->id,
+            null,
+            $data['address_id'],
+            $data['items']
+        );
+
+        return $this->successResponse($order, 'تم إنشاء الطلب بنجاح', 201);
     }
 
-    public function show($id)
+    // ✅ إلغاء الطلب بواسطة النادل
+    public function cancel_Waiter($id)
     {
-        return response()->json($this->orderService->getOrderById($id));
+        if (auth()->user()->role !== 'waiter') {
+            return $this->errorResponse(null, 'You are not authorized to cancel this order', 403);
+        }
+
+        $result = $this->orderService->cancelOrder($id);
+
+        if (!$result) {
+            return $this->errorResponse(null, 'Order not found', 404);
+        }
+
+        return $this->successResponse(null, 'Order cancelled successfully');
     }
 
-    public function update(OrderRequest $request, $id)
+    // ✅ تغيير حالة الطلبات
+    public function markAsRequested($id)
     {
-        return response()->json($this->orderService->updateOrder($id, $request->validated()));
+        try {
+            $order = $this->orderService->markAsRequested($id);
+            return $this->successResponse($order, 'Order has been requested successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
+        }
     }
 
-    public function destroy($id)
+    public function markAsPreparing($id)
     {
-        return response()->json($this->orderService->deleteOrder($id), 204);
+        try {
+            $order = $this->orderService->markAsPreparing($id);
+            return $this->successResponse($order, 'Order is now being prepared');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
+        }
+    }
+
+    public function markAsOnTheWay($id)
+    {
+        try {
+            $order = $this->orderService->markAsOnTheWay($id);
+            return $this->successResponse($order, 'Order is on the way');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
+        }
+    }
+
+    public function markAsPaid($id)
+    {
+        try {
+            $order = $this->orderService->markAsPaid($id);
+            return $this->successResponse($order, 'Order has been paid successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 400);
+        }
     }
 }
-

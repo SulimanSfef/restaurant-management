@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('menu_item_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity');
-            $table->text('note')->nullable();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade'); // الطلب الأساسي
+            $table->foreignId('menu_item_id')->constrained()->onDelete('cascade'); // المنتج المطلوب
+            $table->integer('quantity')->default(1); // عدد القطع
+            $table->text('note')->nullable(); // ملاحظات اختيارية (مثلاً بدون بصل)
             $table->timestamps();
         });
     }

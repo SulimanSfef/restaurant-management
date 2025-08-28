@@ -15,11 +15,7 @@ class CategoryRepository
         return Category::create($data);
     }
 
-    public function getCategoryById($id)
-    {
-        return Category::findOrFail($id);
-    }
-
+   
     public function updateCategory($id, $data)
     {
         $category = Category::findOrFail($id);

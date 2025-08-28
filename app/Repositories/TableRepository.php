@@ -2,6 +2,9 @@
 namespace App\Repositories;
 
 use App\Models\Table;
+use App\Models\Reservation;
+use Carbon\Carbon;
+
 
 class TableRepository
 {
@@ -36,9 +39,11 @@ class TableRepository
     // في TableRepository.php
 public function getTablesByCapacity($peopleCount)
 {
+
     return Table::where('capacity', '>=', $peopleCount)
                 ->where('status', 'available') // لو عندك حالة للطاولة مثلا متاحة أو محجوزة
                 ->get();
+
 }
 
 public function getTablesSortedByReservations()
@@ -47,6 +52,22 @@ public function getTablesSortedByReservations()
         ->orderBy('reservations_count', 'asc')
         ->get();
 }
+
+public function getReservationsForTable($tableId)
+{
+    return Reservation::where('table_id', $tableId)->get();
+}
+
+public function findByNumber($number)
+{
+    return Table::where('table_number', $number)->first();
+}
+
+public function findByMinCapacity($minCapacity)
+{
+    return Table::where('capacity', '>=', $minCapacity)->orderBy('capacity')->get();
+}
+
 
 
 }

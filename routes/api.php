@@ -5,55 +5,112 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\OfferController;
+use App\Http\Controllers\WalletController;
 
 
-//////////////////// AUTH ////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-//////////////////// LOGGED IN ROUTES ////////////////////
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/user', [AuthController::class, 'user']);
-    Route::post('/refresh', [AuthController::class, 'refreshToken']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', [AuthController::class, 'user']);
+        Route::post('/refresh', [AuthController::class, 'refreshToken']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/users/{id}', [UserController::class, 'updateProfile']);
 
-    // ⭐⭐ Ratings (General for all authenticated users)
-    Route::post('/ratings', [RatingController::class, 'store']);
-    Route::get('/ratings/{menu_item_id}', [RatingController::class, 'show']);
 
-    //////////////////// ADMIN ROUTES ////////////////////
+        Route::post('/ratings', [RatingController::class, 'store']);
+        Route::get('/ratings/{menu_item_id}', [RatingController::class, 'show']);
+        Route::get('/menu-items/{id}/user-rating', [RatingController::class, 'userRating']);
+
+
+        Route::get('/wallet/balance', [WalletController::class, 'balance']);
+        Route::get('/wallet/transactions', [WalletController::class, 'transactions']);
+        Route::post('/wallet/charge', [WalletController::class, 'charge']);
+        Route::post('/orders/{order}/pay-wallet', [WalletController::class, 'payOrder']);
+
+
+
+         Route::post('/user/orders', [OrderController::class, 'store']);
+         Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancel_Waiter']);
+
+
+
+        Route::get('/my-orders/{order}/status', [UserOrderController::class, 'getOrderStatus']);
+        Route::get('/my-orders', [UserOrderController::class, 'getMyOrders']);
+        Route::delete('/orders/{id}/cancel', [UserOrderController::class, 'cancelOrder']);
+        Route::post('/order-items', [OrderItemController::class, 'store']);
+        Route::get('/orders/{orderId}/items', [OrderItemController::class, 'getByOrder']);
+
+
+        Route::post('orders/{id}/requested', [OrderController::class, 'markAsRequested']);
+        Route::post('orders/{id}/on-the-way', [OrderController::class, 'markAsOnTheWay']);
+
+
+
+
+
+
+
+        Route::post('/addresses', [AddressController::class, 'store']);
+        Route::delete('/addresses/{id}', [AddressController::class, 'destroy']);
+
+
+        Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
+        Route::post('/auto/reservations', [ReservationController::class, 'autoReserve']);
+        Route::post('/reservations/{reservation}', [ReservationController::class, 'update']);
+        Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy']);
+        Route::put('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
+
+        //جلب اوقات المحجوزة فيها الطاولة حسب التاريخ والرقم الطاولة
+        Route::post('/get-booked-slots', [ReservationController::class, 'getBookedSlots']);
+        Route::get('/my-reservations', [ReservationController::class, 'getUserReservations']);
+        Route::post('/manual-reserve', [ReservationController::class, 'manualReserve']);
+
+        Route::get('/offers', [OfferController::class, 'index']);
+
     Route::middleware('is.admin')->group(function () {
+
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
-
-        // إدارة الطاولات - فقط الأدمن
-        Route::resource('tables', TableController::class);
-
+        Route::put('/users/{id}/role', [UserController::class, 'updateRole']);
 
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 
-        // إدارة عناصر القائمة - فقط الأدمن
         Route::post('/menu-items/{category_id}', [MenuItemController::class, 'store']);
-        // ادارة ادوار المستخدمين
-        Route::put('/users/{id}/role', [UserController::class, 'updateRole']);
+
+        Route::get('/users/{userId}/addresses', [AddressController::class, 'getByUser']);
+
+        Route::get('/ratings/{menuItemId}/average', [RatingController::class, 'average']);
+
+
+        Route::post('/offers/store', [OfferController::class, 'store']); // إضافة عرض جديد
+        Route::get('/offers/show/{id}', [OfferController::class, 'show']); // عرض عرض معين
+        Route::put('/offers/update/{id}', [OfferController::class, 'update']);
+        Route::delete('/offers/destroy/{id}', [OfferController::class, 'destroy']);
+
+
     });
+
         Route::get('/categories', [CategoryController::class, 'index']);
         Route::get('/categories/{id}', [CategoryController::class, 'show']);
-
-
 
 
         Route::get('/menu-items', [MenuItemController::class, 'index']);
@@ -63,60 +120,49 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/tables', [TableController::class, 'index']);
         Route::get('/tables/{tableId}', [TableController::class, 'show']);
-        Route::post('/tables/{tableId}', [TableController::class, 'store']);
+        Route::post('/tables', [TableController::class, 'store']);
         Route::put('/tables/{tableId}', [TableController::class, 'update']);
         Route::delete('/tables/{tableId}', [TableController::class, 'destroy']);
 
-    //////////////////// CASHIER ROUTES ////////////////////
+
     Route::middleware('is.cashier')->group(function () {
-        // إدارة الفواتير - الكاشير
+
         Route::resource('invoices', InvoiceController::class);
 
-        // إدارة الطلبات - الكاشير
-        Route::resource('orders', OrderController::class);
     });
 
-    //////////////////// CHEF ROUTES ////////////////////
     Route::middleware('is.chef')->group(function () {
-        // عرض وتحضير الطلبات - الطباخ
         Route::get('/orders', [OrderController::class, 'index']);
         Route::get('/orders/{order}', [OrderController::class, 'show']);
         // بإمكانك إضافة مسارات تحديث حالة الطلب مثل:
         // Route::patch('/orders/{order}/prepare', [OrderController::class, 'prepare']);
     });
 
-    //////////////////// WAITER ROUTES ////////////////////
     Route::middleware('is.waiter')->group(function () {
-        // الطلبات
-        Route::resource('orders', OrderController::class)->only(['index', 'store']);
 
-        // جلب كل الحجوزات
-Route::get('/reservations', [ReservationController::class, 'index']);
 
-// جلب حجز معين
-Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
+        Route::post('/create/orders', [OrderController::class, 'store']);
+        ///جديد
 
-// إنشاء حجز جديد
-Route::post('/reservations', [ReservationController::class, 'store']);
+        Route::post('/by-waiter', [OrderController::class, 'storeByWaiter']);
 
-// تعديل حجز
-Route::put('/reservations/{reservation}', [ReservationController::class, 'update']);
 
-// حذف حجز
-Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy']);
+        Route::post('orders/{id}/preparing', [OrderController::class, 'markAsPreparing']);
+        Route::post('orders/{id}/paid', [OrderController::class, 'markAsPaid']);
 
-        // عناصر الطلب
-        Route::resource('order-items', OrderItemController::class);
+
+
     });
-
-
 
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites/{menu_item_id}', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{menu_item_id}', [FavoriteController::class, 'destroy']);
 
-    Route::get('/tables/capacity/{peopleCount}', [TableController::class, 'getTablesByCapacity']);
-    Route::get('/tables/sorted/by-reservations', [TableController::class, 'tablesSortedByReservations']);
+
+Route::get('/notifications', function () {
+    $waiter = \App\Models\User::where('role', 'waiter')->first();
+    return $waiter->notifications;
+});
 
 
 });

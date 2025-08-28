@@ -11,19 +11,19 @@ class OrderItem extends Model
 
     protected $fillable = ['order_id', 'menu_item_id', 'quantity', 'note'];
 
-    /**
-     * علاقة عنصر الطلب مع الطلب (Order)
-     */
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * علاقة عنصر الطلب مع القائمة (MenuItem)
-     */
     public function menuItem()
     {
         return $this->belongsTo(MenuItem::class);
     }
+
+    public function offers()
+{
+    return $this->hasMany(Offer::class, 'menu_item_id');
+}
+
 }

@@ -8,30 +8,31 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'table_id', 'status'];
+    protected $fillable = ['user_id', 'table_id', 'address_id', 'status','final_price'];
 
-    /**
-     * علاقة الطلب مع المستخدم (User)
-     */
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * علاقة الطلب مع الطاولة (Table)
-     */
+
     public function table()
     {
         return $this->belongsTo(Table::class);
     }
 
-    /**
-     * علاقة الطلب مع عناصر الطلب (Order Items)
-     */
-    public function orderItems()
+      public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+
+
+    // العلاقة مع عنوان التوصيل (إذا الطلب ديلفري)
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
     }
 
     /**

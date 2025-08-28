@@ -1,8 +1,12 @@
 <?php
-// app/Http/Controllers/UserController.php
+
 namespace App\Http\Controllers;
 
+
+use App\Http\Requests\UpdateUserRequest; // سننشئها الآن
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\DeleteUserRequest;
+use App\Http\Requests\Request;
 use App\Services\UserService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -17,6 +21,7 @@ class UserController extends Controller
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
+
     }
 
     public function destroy(DeleteUserRequest $request, $id)
@@ -41,4 +46,16 @@ class UserController extends Controller
             return $this->errorResponse($e->getMessage(), 400);
         }
     }
+  public function updateProfile(UpdateUserRequest $request, $id): JsonResponse
+    {
+        $user = $this->userService->updateProfile($id, $request->validated());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User profile updated successfully',
+            'data' => $user,
+        ]);
+    }
+
 }
+

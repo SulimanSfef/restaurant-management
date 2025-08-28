@@ -9,7 +9,23 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['customer_name', 'phone', 'table_id', 'reserved_at', 'status', 'notes'];
+    protected $casts = [
+    'booked_slots' => 'array',
+    'date' => 'date',
+];
+
+
+  protected $fillable = [
+    'user_id',
+    'customer_name',
+    'phone',
+    'guest_count',
+    'table_id',
+    'booked_slots',
+    'date',
+    'status',
+    'notes',
+];
 
     /**
      * علاقة الحجز مع الطاولة (Table)
@@ -18,4 +34,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Table::class);
     }
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

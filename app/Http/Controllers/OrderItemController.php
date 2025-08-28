@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderItemRequest;
+use Illuminate\Http\Request;
 use App\Services\OrderItemService;
 
 class OrderItemController extends Controller
@@ -14,33 +14,25 @@ class OrderItemController extends Controller
         $this->orderItemService = $orderItemService;
     }
 
-    // للحصول على جميع العناصر في الطلب
-    public function index()
+    // إضافة صنف لطلب
+    public function store(Request $request)
     {
-        return response()->json($this->orderItemService->getAllOrderItems());
+        $data = $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'menu_item_id' => 'required|exists:menu_items,id',
+            'quantity' => 'required|integer|min:1',
+            'note' => 'nullable|string'
+        ]);
+
+        $item = $this->orderItemService->addItem($data);
+
+        return response()->json($item, 201);
     }
 
-    // لإنشاء عنصر جديد في الطلب
-    public function store(OrderItemRequest $request)
+    // جلب كل الأصناف التابعة لطلب معين
+    public function getByOrder($orderId)
     {
-        return response()->json($this->orderItemService->createOrderItem($request->validated()), 201);
-    }
-
-    // للحصول على تفاصيل عنصر معين في الطلب
-    public function show($id)
-    {
-        return response()->json($this->orderItemService->getOrderItemById($id));
-    }
-
-    // لتحديث عنصر في الطلب
-    public function update(OrderItemRequest $request, $id)
-    {
-        return response()->json($this->orderItemService->updateOrderItem($id, $request->validated()));
-    }
-
-    // لحذف عنصر من الطلب
-    public function destroy($id)
-    {
-        return response()->json($this->orderItemService->deleteOrderItem($id), 201);
+        $items = $this->orderItemService->getItemsByOrder($orderId);
+        return response()->json($items);
     }
 }

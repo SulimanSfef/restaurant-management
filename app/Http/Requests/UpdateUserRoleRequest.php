@@ -8,7 +8,7 @@ class UpdateUserRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // تأكد أن المستخدم مخول، أو أضف منطق الصلاحية إذا لزم الأمر
+        return true;
     }
 
     public function rules(): array

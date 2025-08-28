@@ -6,35 +6,20 @@ use App\Repositories\OrderItemRepository;
 
 class OrderItemService
 {
-    protected $orderItemRepository;
+    protected $orderItemRepo;
 
-    public function __construct(OrderItemRepository $orderItemRepository)
+    public function __construct()
     {
-        $this->orderItemRepository = $orderItemRepository;
+        $this->orderItemRepo = new OrderItemRepository();
     }
 
-    public function getAllOrderItems()
+    public function addItem(array $data)
     {
-        return $this->orderItemRepository->getAllOrderItems();
+        return $this->orderItemRepo->create($data);
     }
 
-    public function createOrderItem($data)
+    public function getItemsByOrder($orderId)
     {
-        return $this->orderItemRepository->createOrderItem($data);
-    }
-
-    public function getOrderItemById($id)
-    {
-        return $this->orderItemRepository->getOrderItemById($id);
-    }
-
-    public function updateOrderItem($id, $data)
-    {
-        return $this->orderItemRepository->updateOrderItem($id, $data);
-    }
-
-    public function deleteOrderItem($id)
-    {
-        return $this->orderItemRepository->deleteOrderItem($id);
+        return $this->orderItemRepo->getByOrder($orderId);
     }
 }

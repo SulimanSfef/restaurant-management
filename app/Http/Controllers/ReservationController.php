@@ -1,11 +1,20 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ReservationRequest;
+use App\Http\Requests\ManualReserveRequest;
+use App\Http\Requests\GetBookedSlotsRequest;
+use App\Http\Requests\BookedTimesRequest;
+use App\Http\Requests\UpdateReservationRequest;
 use App\Services\ReservationService;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\Request;
+
 
 class ReservationController extends Controller
 {
+    use ApiResponseTrait;
+
     protected $reservationService;
 
     public function __construct(ReservationService $reservationService)
@@ -13,33 +22,90 @@ class ReservationController extends Controller
         $this->reservationService = $reservationService;
     }
 
-    // للحصول على جميع الحجوزات
+    // ✅ عرض كل الحجوزات (للمشرف مثلاً)
     public function index()
     {
-        return response()->json($this->reservationService->getAllReservations());
+        $reservations = $this->reservationService->getAllReservations();
+        return $this->successResponse($reservations);
     }
 
-    // لإنشاء حجز جديد
-    public function store(ReservationRequest $request)
-    {
-        return response()->json($this->reservationService->createReservation($request->validated()));
-    }
 
-    // للحصول على تفاصيل حجز معين
+    // ✅ عرض حجز حسب الـ ID
     public function show($id)
     {
-        return response()->json($this->reservationService->getReservationById($id));
+        $reservation = $this->reservationService->getReservationById($id);
+        return $this->successResponse($reservation);
     }
 
-    // لتحديث الحجز
-    public function update(ReservationRequest $request, $id)
+    // ✅ تعديل حجز
+    public function update(UpdateReservationRequest $request, $id)
     {
-        return response()->json($this->reservationService->updateReservation($id, $request->validated()));
+        $result = $this->reservationService->updateReservation($id, $request->validated());
+
+        if (is_array($result) && isset($result['error'])) {
+            return $this->errorResponse($result['message'], $result['status']);
+        }
+
+        return $this->successResponse($result, 'Reservation updated successfully.');
     }
 
-    // لحذف الحجز
+    // ✅ حذف حجز
     public function destroy($id)
     {
-        return response()->json($this->reservationService->deleteReservation($id), 204);
+        $this->reservationService->deleteReservation($id);
+        return $this->successResponse(null, 'Reservation deleted successfully.', 204);
     }
+
+public function cancel($id)
+{
+    $result = $this->reservationService->cancelReservation($id);
+
+    if (isset($result['error'])) {
+        return $this->errorResponse($result['message'], 403);
+    }
+
+    return $this->successResponse(null, 'Reservation canceled and deleted successfully');
+}
+
+
+public function manualReserve(ManualReserveRequest $request)
+{
+    $result = $this->reservationService->manualReserve($request->validated());
+
+    if (isset($result['error'])) {
+        return $this->errorResponse($result['message'], 409);
+    }
+
+    return $this->successResponse($result, 'Reservation created successfully');
+}
+
+
+public function getBookedSlots(GetBookedSlotsRequest $request)
+{
+    $data = $request->validated();
+    $result = $this->reservationService->getBookedTimes($data);
+
+    if (isset($result['error'])) {
+        return $this->errorResponse($result['message'], 404);
+    }
+
+    return $this->successResponse($result, 'Booked slots fetched successfully');
+}
+
+public function getUserReservations(Request $request)
+{
+    $user = $request->user();
+
+    $reservations = $this->reservationService->getByUser($user->id);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'User reservations fetched successfully.',
+        'data' => $reservations
+    ]);
+}
+
+
+
+
 }

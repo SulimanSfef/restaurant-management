@@ -29,15 +29,6 @@ class CategoryController extends Controller
         return $this->successResponse($category, 'تم إنشاءالصنف بنجاح', 201);
     }
 
-    public function show($id)
-    {
-        try {
-            $category = $this->categoryService->getCategoryById($id);
-            return $this->successResponse($category, 'تم جلب الصنف بنجاح');
-        } catch (\Exception $e) {
-            return $this->errorResponse('الصنف غير موجود', 404);
-        }
-    }
 
     public function update(CategoryRequest $request, $id)
     {

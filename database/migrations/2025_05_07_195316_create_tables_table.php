@@ -13,7 +13,7 @@ return new class extends Migration
     {
      Schema::create('tables', function (Blueprint $table) {
     $table->id();
-    $table->integer('table_number');
+    $table->integer('table_number')->unique();
     $table->enum('status', ['available', 'reserved'])->default('available');
     $table->integer('capacity')->default(1);
     $table->timestamps();

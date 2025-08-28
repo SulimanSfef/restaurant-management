@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\Reservation;
+use Illuminate\Support\Collection;
 
 class ReservationRepository
 {
@@ -33,12 +34,38 @@ class ReservationRepository
         return $reservation->delete();
     }
 
-    public function findByTableAndTime($tableId, $reservedAt)
+    public function getReservationsByTable($tableId)
+    {
+        return Reservation::where('table_id', $tableId)->get();
+    }
+
+    public function getReservationsForTableAndDate($tableId, $date)
+    {
+        return Reservation::where('table_id', $tableId)
+            ->where('date', $date)
+            ->get();
+    }
+
+    public function isSlotTaken($tableId, $date, array $slots)
+    {
+        $reservations = $this->getReservationsForTableAndDate($tableId, $date);
+
+        foreach ($reservations as $reservation) {
+            $existingSlots = json_decode($reservation->booked_slots, true);
+            if (array_intersect($slots, $existingSlots)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+public function getByUser($userId)
 {
-    return \App\Models\Reservation::where('table_id', $tableId)
-        ->where('reserved_at', $reservedAt)
-        ->first();
+    return Reservation::where('user_id', $userId)->with('table')->get();
 }
 
-}
 
+
+
+}

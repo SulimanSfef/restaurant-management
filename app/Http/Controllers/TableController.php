@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TableRequest;
 use App\Http\Requests\UpdateTableRequest;
+use App\Http\Requests\SuggestTableRequest;
 use App\Services\TableService;
 use App\Traits\ApiResponseTrait;
 
@@ -69,11 +70,5 @@ class TableController extends Controller
             return $this->errorResponse('Failed to retrieve tables', 500, ['exception' => $e->getMessage()]);
         }
     }
-
-    public function tablesSortedByReservations()
-{
-    $tables = $this->tableService->getTablesSortedByReservations();
-    return $this->successResponse($tables, 'Tables sorted by reservation count');
-}
 
 }

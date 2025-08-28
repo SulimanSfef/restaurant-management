@@ -12,14 +12,22 @@ return new class extends Migration
     public function up(): void
     {
       Schema::create('orders', function (Blueprint $table) {
-    $table->id(); // رقم الطلب
-    $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-    // الشخص الذي قام بالطلب (زبون أو نادل...)
-    $table->foreignId('table_id')->constrained('tables')->onDelete('cascade');
-    // الطاولة التي تم تنفيذ الطلب عليها
-    $table->enum('status', ['pending', 'preparing', 'served', 'paid', 'cancelled'])->default('pending');
-    // حالة الطلب
-    $table->timestamps(); // created_at و updated_at
+    $table->id();
+    $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+    $table->foreignId('table_id')->nullable()->constrained()->onDelete('set null'); // ✅ صار nullable
+    $table->foreignId('address_id')->nullable()->constrained()->onDelete('set null'); // ✅ لطلبات الديلفري
+    $table->float('final_price', 10, 2)->default(0);
+    $table->enum('status', [
+                'requested',   // الطلب جديد
+                'preparing',   // قيد التحضير
+                'on_the_way',  // في الطريق
+                'paid',        // تم الدفع
+            ])->default('requested');
+
+   $table->timestamps();
+
+
+
 });
 
     }

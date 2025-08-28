@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ResetPasswordRequest extends FormRequest
+class StoreRatingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,10 +21,11 @@ class ResetPasswordRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'email' => 'required|email|exists:users,email',
-            'token' => 'required',
-            'password' => 'required|string|min:6',
+         return [
+            'menu_item_id' => 'required|exists:menu_items,id',
+            'rating' => 'required|numeric|min:0.5|max:5',
+            // 'comment' => 'nullable|string|max:1000',
+
         ];
     }
 }

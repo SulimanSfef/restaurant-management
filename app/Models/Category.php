@@ -9,11 +9,9 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','description'];
+    protected $fillable = ['name','image','description'];
 
-    /**
-     * علاقة الفئة مع عناصر القائمة (MenuItems)
-     */
+
     public function menuItems()
     {
         return $this->hasMany(MenuItem::class);

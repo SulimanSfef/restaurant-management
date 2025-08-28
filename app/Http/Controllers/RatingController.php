@@ -2,9 +2,10 @@
 // app/Http/Controllers/RatingController.php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\RatingService;
 use App\Traits\ApiResponseTrait;
+use App\Http\Requests\StoreRatingRequest;
+
 
 class RatingController extends Controller
 {
@@ -17,28 +18,42 @@ class RatingController extends Controller
         $this->ratingService = $ratingService;
     }
 
-    public function store(Request $request)
+    public function store(StoreRatingRequest $request)
     {
-        $data = $request->validate([
-            'menu_item_id' => 'required|exists:menu_items,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string',
-        ]);
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
 
-        $data['user_id'] = auth()->id(); // لو المستخدم مسجّل
-
-        $rating = $this->ratingService->createRating($data);
-        return $this->successResponse($rating, 'تم إضافة التقييم بنجاح');
+        $rating = $this->ratingService->storeRating($data);
+        return $this->successResponse($rating, 'Rating saved');
     }
 
     public function show($menuItemId)
     {
-        $ratings = $this->ratingService->getRatingsByMenuItem($menuItemId);
-        $average = $this->ratingService->getAverageRating($menuItemId);
+        $ratings = $this->ratingService->getRatings($menuItemId);
+        return $this->successResponse($ratings);
+    }
 
+    public function userRating($menuItemId)
+    {
+    $userId = auth()->id();
+    $rating = $this->ratingService->getUserRatingForMenuItem($menuItemId, $userId);
+
+    return $this->successResponse([
+        'menu_item_id' => $menuItemId,
+        'user_id' => $userId,
+        'rating' => $rating
+    ]);
+    }
+
+
+    public function average($menuItemId)
+    {
+        $average = $this->ratingService->getAverage($menuItemId);
         return $this->successResponse([
-            'average' => $average,
-            'ratings' => $ratings
+            'menu_item_id' => $menuItemId,
+            'average_rating' => round($average, 1)
         ]);
     }
 }
+
+

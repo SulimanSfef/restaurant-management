@@ -3,7 +3,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReservationRequest extends FormRequest
+class UpdateReservationRequest  extends FormRequest
 {
     public function authorize(): bool
     {
@@ -13,11 +13,11 @@ class ReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_name' => 'required|string|max:255',
+            'customer_name' => 'sometimes|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'table_id' => 'required|exists:tables,id',
-            'reserved_at' => 'required|date_format:Y-m-d H:i:s|after:now',
-            'status' => 'required|in:confirmed,pending,cancelled',
+            'table_id' => 'sometimes|exists:tables,id',
+            'duration_minutes' => 'sometimes|integer|min:1',
+            'reserved_at' => 'sometimes|date_format:Y-m-d H:i:s|after:now',
             'notes' => 'nullable|string|max:500',
         ];
     }

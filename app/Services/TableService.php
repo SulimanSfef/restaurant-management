@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\TableRepository;
+use Carbon\Carbon;
 
 class TableService
 {
@@ -39,15 +40,14 @@ class TableService
     }
 
     public function getAvailableTablesByCapacity($peopleCount)
-{
-    return $this->tableRepository->getTablesByCapacity($peopleCount);
+    {
+        return $this->tableRepository->getTablesByCapacity($peopleCount);
+    }
+
+    public function getTablesSortedByReservations()
+    {
+        return $this->tableRepository->getTablesSortedByReservations();
+    }
+
+  
 }
-
-
-public function getTablesSortedByReservations()
-{
-    return $this->tableRepository->getTablesSortedByReservations();
-}
-
-}
-

@@ -34,5 +34,18 @@ class UserRepository
         $user->save();
         return $user;
     }
+
+  
+       public function getById($id)
+    {
+        return User::findOrFail($id);
+    }
+
+    public function updateUser($id, array $data)
+    {
+        $user = User::findOrFail($id);
+        $user->update($data);
+        return $user;
+    }
 }
 

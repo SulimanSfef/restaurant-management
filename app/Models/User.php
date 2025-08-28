@@ -13,18 +13,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-   protected $fillable = ['name', 'email', 'password', 'role'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+   protected $fillable = ['name', 'email', 'password', 'role','profile_image'];
+
+  
     protected $hidden = [
         'password',
         'remember_token',
@@ -39,18 +31,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function sendPasswordResetNotification($token)
-{
-    $this->notify(new ResetPasswordApiNotification($token));
-}
-
   /**
      * علاقة المستخدم مع الطلبات (Orders)
      */
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
+   public function orders()
+{
+    return $this->hasMany(Order::class);
+}
+
     public function ratings()
     {
         return $this->hasMany(Rating::class);
@@ -85,4 +73,33 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class);
     }
+
+    public function addresses()
+   {
+    return $this->hasMany(Address::class);
+   }
+
+   public function reservations()
+{
+    return $this->hasMany(Reservation::class);
+}
+
+
+public function wallet()
+{
+    return $this->hasOne(\App\Models\Wallet::class);
+}
+
+public function walletTransactions()
+{
+    return $this->hasManyThrough(
+        \App\Models\WalletTransaction::class,
+        \App\Models\Wallet::class,
+        'user_id',     // Foreign key on wallets table...
+        'wallet_id',   // Foreign key on wallet_transactions table...
+        'id',          // Local key on users table...
+        'id'           // Local key on wallets table...
+    );
+}
+
 }
