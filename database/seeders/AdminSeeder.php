@@ -13,8 +13,15 @@ class AdminSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('password123'), // تأكد من تغيير كلمة المرور
+            'password' => Hash::make('12345678'), // تأكد من تغيير كلمة المرور
             'role' => 'admin'
+        ]);
+        User::create([
+            'name' => 'seef',
+            'email' => 'seef@gmail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('12345678'), // تأكد من تغيير كلمة المرور
+            'role' => 'client'
         ]);
     }
 }
